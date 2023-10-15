@@ -22,12 +22,10 @@ class DataLoader:
         user_data = self.load_features_user()
         post_data = self.load_features_post()
         feed_data = self.load_features_feed()
-        
-        feed_sub_filename = self._find_feed_data_sub_filename(limit=self.LIMIT)
 
-        self.save_to_csv(file_path="data/raw_data", file_name="user_data.csv", data=user_data,)
+        self.save_to_csv(file_path="data/raw_data", file_name="user_data.csv", data=user_data)
         self.save_to_csv(file_path="data/raw_data", file_name="post_data.csv", data=post_data)
-        self.save_to_csv(file_path="data/raw_data", file_name=f"feed_data_{feed_sub_filename}.csv", data=feed_data)
+        self.save_to_csv(file_path="data/raw_data", file_name="feed_data.csv", data=feed_data)
 
         logger.info("Successfully loaded and saved the Data!")
 
