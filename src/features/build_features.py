@@ -28,18 +28,49 @@ class FeatureEngineering:
         user_data = self.user_data
         post_data = self._add_tfidf_features_to_post_data(self.post_data)
         feed_data = self.feed_data
-
-        result_data = self._create_new_features(user=user_data, 
-                                                post=post_data, 
-                                                feed=feed_data)
         
-        self.save_to_csv(file_path="data/processed_data", file_name="user_data.csv", data=user_data)
-        self.save_to_csv(file_path="data/processed_data", file_name="post_data.csv", data=post_data)
-        self.save_to_csv(file_path="data/processed_data", file_name="result_data.csv", data=result_data)
+        self._save_to_csv(file_path="data/processed_data", file_name="user_data.csv", data=user_data)
+        self._save_to_csv(file_path="data/processed_data", file_name="post_data.csv", data=post_data)
+        self._save_to_csv(file_path="data/processed_data", file_name="feed_data.csv", data=feed_data)
 
         logger.info("Successfully processed and saved the Data!")
 
-    def _process_text(self, text: str):
+    def create_train_samples(self):
+        logger.info("Creating train samples...")
+
+        train_v1 = self._create_train_data_v1(user=self.user_data,
+                                              post=self.post_data,
+                                              feed=self.feed_data)
+        
+        train_v2 = self._create_train_data_v2(user=self.user_data,
+                                              post=self.post_data,
+                                              feed=self.feed_data)
+        
+        self._save_to_csv(file_path="data/train_data/catboost_v1", file_name="train.csv", data=train_v1)
+        self._save_to_csv(file_path="data/train_data/catboost_v2", file_name="train.csv", data=train_v2)
+
+        logger.info("Successfully created and saved train samples!")
+    
+    def _create_train_data_v1(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
+        result_df = self._merge_dfs(user=user, 
+                                    post=post, 
+                                    feed=feed)
+        return result_df
+
+    def _create_train_data_v2(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
+        user_data = user
+        post_data = self._add_tfidf_features_to_post_data(post)
+        feed_data = feed
+
+        merged_df = self._merge_dfs(user=user_data, 
+                                    post=post_data, 
+                                    feed=feed_data)
+        
+        result_df = self._create_new_features(merged_data=merged_df)
+
+        return result_df
+        
+    def _process_text(self, text: str) -> str:
         text = text.lower()
         text = re.sub(r'[^\w\s]', '', text)
         text = re.sub('\n', ' ', text)
@@ -65,21 +96,30 @@ class FeatureEngineering:
 
         return post_df
 
-    def _create_new_features(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
+    def _merge_dfs(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
         # Copy dfs
         user_df = user.copy()
         post_df = post.copy()
         feed_df = feed.copy()
 
-        logger.info("Creating new features on merged DataFrame...")
+        logger.info("Merging data...")
 
-        # Merge dfs and drop extra columns
         df = feed_df.merge(right=user_df, how='left', on='user_id').merge(post_df, how='left', on='post_id')
         df = df[df.action != 'like']
         df = df.drop('action', axis=1)
         df = df.sort_values('date', ascending=True)
         df = df.drop('date', axis=1)
         df = df.drop('exp_group', axis=1)
+
+        logger.info("Merged data")
+
+        return df
+
+    def _create_new_features(self, merged_data: pd.DataFrame) -> pd.DataFrame:
+        # Copy df
+        df = merged_data.copy()
+
+        logger.info("Creating new features on merged DataFrame...")
 
         # Create new features
         df['post_likes_to_views_ratio'] = round(df.groupby('post_id').target.transform('sum')
@@ -98,7 +138,7 @@ class FeatureEngineering:
 
         return df
     
-    def save_to_csv(self, file_path: str, file_name: str, data: pd.DataFrame, sep: str = ';'):
+    def _save_to_csv(self, file_path: str, file_name: str, data: pd.DataFrame, sep: str = ';'):
         logger.info(f"Saving {file_path}/{file_name}...")
 
         data.to_csv(f"{file_path}/{file_name}", sep=sep, index=False)
@@ -109,3 +149,4 @@ class FeatureEngineering:
 if __name__ == '__main__':
     feature_engineering = FeatureEngineering()
     feature_engineering.process_data()
+    feature_engineering.create_train_samples()
