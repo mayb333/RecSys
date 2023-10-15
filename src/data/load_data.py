@@ -61,7 +61,9 @@ def load_features_feed(limit=3_000_000):
 
 
 def save_to_csv(file_path: str, file_name: str, data: pd.DataFrame, sep: str = ';'):
-    data.to_csv(f"{file_path}/{file_name}", sep=sep)
+    data.to_csv(f"{file_path}/{file_name}", sep=sep, index=False)
+    
+    logger.info(f"Saved {file_name}")
 
 
 if __name__ == '__main__':
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     post_data = load_features_post()
     feed_data = load_features_feed()
 
-    save_to_csv(file_path="data/raw_data", file_name="user_data.csv", data=user_data)
-    save_to_csv(file_path="data/raw_data", file_name="post_data.csv", data=user_data)
-    save_to_csv(file_path="data/raw_data", file_name="feed_data_3kk.csv", data=user_data)
+    save_to_csv(file_path="data/raw_data", file_name="user_data.csv", data=user_data,)
+    save_to_csv(file_path="data/raw_data", file_name="post_data.csv", data=post_data)
+    save_to_csv(file_path="data/raw_data", file_name="feed_data_3kk.csv", data=feed_data)
     
