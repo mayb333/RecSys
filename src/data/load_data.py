@@ -1,4 +1,3 @@
-import sys
 import os
 import pandas as pd
 from dotenv import load_dotenv
@@ -18,6 +17,8 @@ class DataLoader:
         self.LIMIT = limit_feed_data
 
     def load_data(self):
+        logger.info("Loading data...")
+
         user_data = self.load_features_user()
         post_data = self.load_features_post()
         feed_data = self.load_features_feed()
@@ -31,6 +32,8 @@ class DataLoader:
         logger.info("Successfully loaded and saved the Data!")
 
     def _batch_load_sql(self, query: str, database_url: str = DATABASE_URL) -> pd.DataFrame:
+        logger.info("Connecting to Database...")
+
         CHUNKSIZE = 200000
         engine = create_engine(database_url)
         conn = engine.connect().execution_options(stream_results=True)
@@ -41,10 +44,14 @@ class DataLoader:
         for chunk_dataframe in pd.read_sql(query, conn, chunksize=CHUNKSIZE):
             chunks.append(chunk_dataframe)
         conn.close()
+
+        logger.info("Disconnected from Database")
+
         return pd.concat(chunks, ignore_index=True)
 
-
     def load_features_user(self):
+        logger.info("Loading user_data table...")
+
         query = """SELECT * 
                 FROM user_data"""
         result = self._batch_load_sql(query)
@@ -53,8 +60,9 @@ class DataLoader:
 
         return result
 
-
     def load_features_post(self):
+        logger.info("Loading post_text_df table...")
+
         query = """SELECT * 
                 FROM post_text_df"""
         result = self._batch_load_sql(query)
@@ -63,8 +71,9 @@ class DataLoader:
 
         return result
 
-
     def load_features_feed(self, limit=3_000_000):
+        logger.info("Loading feed_data table...")
+
         query = f"""SELECT * 
                     FROM feed_data
                     LIMIT {limit}"""
@@ -77,11 +86,12 @@ class DataLoader:
 
         return result
 
-
     def save_to_csv(self, file_path: str, file_name: str, data: pd.DataFrame, sep: str = ';'):
+        logger.info(f"Saving {file_path}/{file_name}...")
+
         data.to_csv(f"{file_path}/{file_name}", sep=sep, index=False)
 
-        logger.info(f"Saved {file_name}")
+        logger.info(f"Saved {file_path}/{file_name}")
 
     def _find_feed_data_sub_filename(self, limit):
         if limit / 1_000_000 >= 1:
