@@ -5,3 +5,6 @@ raw_feed_data_path: data/raw_data/feed_data.csv
 processed_user_data_path: data/processed_data/user_data.csv
 processed_post_data_path: data/processed_data/post_data.csv
 processed_result_data_path: data/processed_data/result_data.csv
+
+train_data_v1_path: data/train_data/catboost_v1/train.csv
+train_data_v2_path: data/train_data/catboost_v2/train.csv
