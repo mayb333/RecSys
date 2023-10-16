@@ -8,3 +8,5 @@ processed_result_data_path: data/processed_data/result_data.csv
 
 train_data_v1_path: data/train_data/catboost_v1/train.csv
 train_data_v2_path: data/train_data/catboost_v2/train.csv
+
+validation_data_path: data/validation_data/validation_data.csv
