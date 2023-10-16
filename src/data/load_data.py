@@ -19,13 +19,15 @@ class DataLoader:
     def load_data(self):
         logger.info("Loading data...")
 
-        user_data = self.load_features_user()
-        post_data = self.load_features_post()
-        feed_data = self.load_features_feed()
+        user_data = self.load_user_data()
+        post_data = self.load_post_data()
+        feed_data = self.load_feed_data()
+        validation = self.load_validation_data()
 
         self.save_to_csv(file_path="data/raw_data", file_name="user_data.csv", data=user_data)
         self.save_to_csv(file_path="data/raw_data", file_name="post_data.csv", data=post_data)
         self.save_to_csv(file_path="data/raw_data", file_name="feed_data.csv", data=feed_data)
+        self.save_to_csv(file_path="data/validation_data", file_name="validation_data.csv", data=validation)
 
         logger.info("Successfully loaded and saved the Data!")
 
@@ -47,7 +49,7 @@ class DataLoader:
 
         return pd.concat(chunks, ignore_index=True)
 
-    def load_features_user(self):
+    def load_user_data(self):
         logger.info("Loading user_data table...")
 
         query = """SELECT * 
@@ -58,7 +60,7 @@ class DataLoader:
 
         return result
 
-    def load_features_post(self):
+    def load_post_data(self):
         logger.info("Loading post_text_df table...")
 
         query = """SELECT * 
@@ -69,7 +71,7 @@ class DataLoader:
 
         return result
 
-    def load_features_feed(self, limit=3_000_000):
+    def load_feed_data(self, limit=3_000_000):
         logger.info("Loading feed_data table...")
 
         query = f"""SELECT * 
@@ -81,6 +83,30 @@ class DataLoader:
         result = result.drop('timestamp', axis=1)
 
         logger.info("Loaded feed_data table")
+
+        return result
+    
+    def load_validation_data(self, limit: int = 2_000_000, offset: int = 3_000_000):
+        logger.info("Loading validation data...")
+
+        query = f"""SELECT
+                      user_id,
+                      ARRAY_AGG(post_id) as liked_posts
+                    FROM
+                      (
+                        SELECT
+                          *
+                        FROM
+                          feed_data
+                        LIMIT
+                          {limit} OFFSET {offset}
+                      ) as subquery
+                    GROUP BY
+                      user_id
+                    """
+        result = self._batch_load_sql(query)
+
+        logger.info("Loaded validation data...")
 
         return result
 
