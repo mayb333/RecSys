@@ -27,16 +27,6 @@ class FeatureEngineering:
 
         user_data = self.user_data
         post_data = self._add_tfidf_features_to_post_data(self.post_data)
-        feed_data = self.feed_data
-        
-        self._save_to_csv(file_path="data/processed_data", file_name="user_data.csv", data=user_data)
-        self._save_to_csv(file_path="data/processed_data", file_name="post_data.csv", data=post_data)
-        self._save_to_csv(file_path="data/processed_data", file_name="feed_data.csv", data=feed_data)
-
-        logger.info("Successfully processed and saved the Data!")
-
-    def create_train_samples(self):
-        logger.info("Creating train samples...")
 
         train_v1 = self._create_train_data_v1(user=self.user_data,
                                               post=self.post_data,
@@ -46,12 +36,21 @@ class FeatureEngineering:
                                               post=self.post_data,
                                               feed=self.feed_data)
         
+        posts_cr = train_v2.groupby('post_id').post_likes_to_views_ratio.max().to_dict()
+        post_data['post_likes_to_views_ratio'] = post_data.post_id.map(posts_cr)
+        post_data['post_likes_to_views_ratio'] = post_data['post_likes_to_views_ratio']\
+            .fillna(round(post_data.groupby('topic').post_likes_to_views_ratio.transform('mean'), 3))
+        
+        self._save_to_csv(file_path="data/processed_data", file_name="user_data.csv", data=user_data)
+        self._save_to_csv(file_path="data/processed_data", file_name="post_data.csv", data=post_data)
+        self._save_to_csv(file_path="data/processed_data", file_name="feed_data.csv", data=train_v2)
         self._save_to_csv(file_path="data/train_data/catboost_v1", file_name="train.csv", data=train_v1)
         self._save_to_csv(file_path="data/train_data/catboost_v2", file_name="train.csv", data=train_v2)
 
-        logger.info("Successfully created and saved train samples!")
+        logger.info("Successfully processed and saved the Data!")
     
     def _create_train_data_v1(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
+        post = post.drop('text', axis=1)
         result_df = self._merge_dfs(user=user, 
                                     post=post, 
                                     feed=feed)
@@ -59,7 +58,7 @@ class FeatureEngineering:
 
     def _create_train_data_v2(self, user: pd.DataFrame, post: pd.DataFrame, feed: pd.DataFrame) -> pd.DataFrame:
         user_data = user
-        post_data = self._add_tfidf_features_to_post_data(post)
+        post_data = self._add_tfidf_features_to_post_data(post).drop('text', axis=1)
         feed_data = feed
 
         merged_df = self._merge_dfs(user=user_data, 
@@ -149,4 +148,3 @@ class FeatureEngineering:
 if __name__ == '__main__':
     feature_engineering = FeatureEngineering()
     feature_engineering.process_data()
-    feature_engineering.create_train_samples()
