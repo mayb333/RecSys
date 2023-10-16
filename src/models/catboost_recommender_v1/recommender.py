@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     logger.info("Successfully read the train data!")
 
-    X_train = train.drop(['user_id', 'post_id', 'target', 'text'], axis=1)
+    X_train = train.drop(['user_id', 'post_id', 'target'], axis=1)
     y_train = train.target
 
     recommender = Recommender_v1()

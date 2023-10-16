@@ -36,4 +36,4 @@ def evaluate_metrics(model, model_name: str = 'Recommender_v1'):
 if __name__ == '__main__':
      model = pickle.load(open('src/models/catboost_recommender_v1/catboost_rec_v1.pkl', 'rb'))
 
-     evaluate_metrics(model=model, model_name='Recommender_v1') #hitrate@5 = 0.678
+     evaluate_metrics(model=model, model_name='Recommender_v1') #hitrate@5 = 0.64
