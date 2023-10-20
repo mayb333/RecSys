@@ -6,8 +6,8 @@ venv/
 __pycache__/
 catboost_info/
 
-catboost_rec_v1.pkl
+recommender_v1.pkl
 validation_model_v1.pkl
 
-catboost_rec_v2.pkl
+recommender_v2.pkl
 validation_model_v2.pkl

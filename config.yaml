@@ -10,3 +10,6 @@ train_data_v1_path: data/train_data/catboost_v1/train.csv
 train_data_v2_path: data/train_data/catboost_v2/train.csv
 
 validation_data_path: data/validation_data/validation_data.csv
+
+recommender_v1_path: src/models/catboost_recommender_v1/artifacts/recommender_v1.pkl
+recommender_v2_path: src/models/catboost_recommender_v2/artifacts/recommender_v2.pkl
