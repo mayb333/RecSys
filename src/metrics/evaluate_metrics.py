@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import numpy as np
 from src.models.catboost_recommender_v1 import Recommender_v1_validation
+from src.models.catboost_recommender_v2 import Recommender_validation
 from src.metrics import hitrate_at_k
 
 
@@ -42,5 +43,8 @@ def evaluate_metrics(model, model_name: str = 'Recommender_v1'):
 
 
 if __name__ == '__main__':
-    model_v1 = pickle.load(open('src/models/catboost_recommender_v1/validation_model_v1.pkl', 'rb'))
+    model_v1 = pickle.load(open('src/models/catboost_recommender_v1/artifacts/validation_model_v1.pkl', 'rb'))
     evaluate_metrics(model=model_v1, model_name='Recommender_v1') #hitrate@5 = 0.572
+
+    model_v2 = pickle.load(open('src/models/catboost_recommender_v2/artifacts/validation_model_v2.pkl', 'rb'))
+    evaluate_metrics(model=model_v2, model_name='Recommender_v2') #hitrate@5 = 0.621

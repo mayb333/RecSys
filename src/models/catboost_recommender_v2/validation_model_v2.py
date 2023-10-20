@@ -77,7 +77,7 @@ class Recommender_validation:
 
 
 if __name__ == '__main__':
-    MODEL_PATH = 'src/models/catboost_recommender_v2'
+    MODEL_PATH = 'src/models/catboost_recommender_v2/artifacts'
     MODEL_NAME = 'validation_model_v2.pkl'
 
     logger.info("Reading the train data")
