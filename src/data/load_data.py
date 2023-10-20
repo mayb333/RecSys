@@ -91,7 +91,8 @@ class DataLoader:
 
         query = f"""SELECT
                       user_id,
-                      ARRAY_AGG(post_id) as liked_posts
+                      ARRAY_AGG(subquery.post_id) FILTER (WHERE target = 1) as liked_posts,
+                      ARRAY_AGG(subquery.post_id) as viewed_posts
                     FROM
                       (
                         SELECT
