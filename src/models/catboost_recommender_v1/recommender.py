@@ -7,7 +7,7 @@ from catboost import CatBoostClassifier
 
 class Recommender_v1:
     def __init__(self):
-        self.model = CatBoostClassifier(n_estimators=150)
+        self.model = CatBoostClassifier(n_estimators=150, random_state=1)
         self.cat_features = ['gender', 'country', 'city', 'os', 'source', 'topic']
         self.cols_to_drop = ['user_id', 'post_id', 'text', 'exp_group']
 
@@ -50,6 +50,9 @@ class Recommender_v1:
         return recs
     
 if __name__ == '__main__':
+    MODEL_PATH = 'src/models/catboost_recommender_v1'
+    MODEL_NAME = 'catboost_rec_v1.pkl'
+
     logger.info("Reading the train data")
 
     with open('config.yaml', 'r') as file:
@@ -66,6 +69,6 @@ if __name__ == '__main__':
     recommender = Recommender_v1()
     recommender.fit(X_train, y_train)
 
-    pickle.dump(recommender, open('src/models/catboost_recommender_v1/catboost_rec_v1.pkl', 'wb'))
+    pickle.dump(recommender, open(f"{MODEL_PATH}/{MODEL_NAME}", 'wb'))
 
-    logger.info("Successfully saved the trained Recommender model!")
+    logger.info(f"Successfully trained and saved Recommender model as {MODEL_NAME}!")
