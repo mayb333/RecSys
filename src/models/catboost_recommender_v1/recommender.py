@@ -51,7 +51,7 @@ class Recommender_v1:
     
 if __name__ == '__main__':
     MODEL_PATH = 'src/models/catboost_recommender_v1/artifacts'
-    MODEL_NAME = 'catboost_rec_v1.pkl'
+    MODEL_NAME = 'recommender_v1.pkl'
 
     logger.info("Reading the train data")
 
