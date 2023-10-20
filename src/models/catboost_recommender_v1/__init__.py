@@ -1,1 +1,2 @@
 from .recommender import Recommender_v1
+from .validation_model_v1 import Recommender_v1_validation
