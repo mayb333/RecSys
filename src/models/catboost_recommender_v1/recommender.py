@@ -37,17 +37,16 @@ class Recommender_v1:
         posts['user_id'] = user_id
         user_df = pd.merge(user, posts, on='user_id', how='right')
 
+        # Predicting probabilities, sorting them in descending and building recs as top N posts by probs
         posts['pred_prob'] = self.model.predict_proba(user_df.drop(self.cols_to_drop, axis=1))[:, 1]
-
         sorted_posts = posts.sort_values('pred_prob', ascending=False).rename(columns={'post_id': 'id'})
-
         recs = sorted_posts[['id', 'text', 'topic']].head(limit)
-
         recs = recs.to_dict(orient='records')
 
         logger.info("Successfully predicted!")
 
         return recs
+    
     
 if __name__ == '__main__':
     MODEL_PATH = 'src/models/catboost_recommender_v1/artifacts'

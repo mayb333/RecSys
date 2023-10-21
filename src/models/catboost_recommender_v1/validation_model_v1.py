@@ -34,16 +34,14 @@ class Recommender_v1_validation:
         # Preparing DataFrame for user: merged df with user_data for user_id and post_data
         user = self.user_data[self.user_data.user_id == user_id].reset_index().drop('index', axis=1)
         posts = self.post_data.copy()
-        posts = posts[posts.post_id.isin(viewed_posts)]
+        posts = posts[posts.post_id.isin(viewed_posts)] # Taking the posts that have been viewed by user
         posts['user_id'] = user_id
         user_df = pd.merge(user, posts, on='user_id', how='right')
 
+        # Predicting probabilities, sorting them in descending and building recs as top N posts by probs
         posts['pred_prob'] = self.model.predict_proba(user_df.drop(self.cols_to_drop, axis=1))[:, 1]
-
         sorted_posts = posts.sort_values('pred_prob', ascending=False).rename(columns={'post_id': 'id'})
-
         recs = sorted_posts[['id', 'text', 'topic']].head(limit)
-
         recs = recs.to_dict(orient='records')
 
         logger.info("Successfully predicted!")

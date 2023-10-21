@@ -45,6 +45,22 @@ class Recommender:
         posts['user_id'] = user_id
         user_df = pd.merge(user, posts, on='user_id', how='right')
 
+        # Get necessary user's features
+        user_df = self._get_users_features(user_df=user_df, user_id=user_id)
+
+        # Predicting probabilities, sorting them in descending and building recs as top N posts by probs
+        posts['pred_prob'] = self.model.predict_proba(user_df.drop(self.cols_to_drop, axis=1))[:, 1]
+        sorted_posts = posts.sort_values('pred_prob', ascending=False).rename(columns={'post_id': 'id'})
+        recs = sorted_posts[['id', 'text', 'topic']].head(limit)
+        recs = recs.to_dict(orient='records')
+
+        logger.info("Successfully predicted!")
+
+        return recs
+    
+    def _get_users_features(self, user_df: pd.DataFrame, user_id: int) -> pd.DataFrame:
+        user_df = user_df.copy()
+
         if self.result_df[self.result_df.user_id == user_id].user_likes_to_views_ratio.values.size > 0:
             user_likes_to_views_ratio = self.result_df[self.result_df.user_id == id].user_likes_to_views_ratio.iloc[0]
             user_proportion_of_likes_by_topic = user_df.topic.map(self.users_proportion_of_likes_by_topics[id])
@@ -62,17 +78,7 @@ class Recommender:
         user_df['user_likes_to_views_ratio'] = user_likes_to_views_ratio
         user_df['user_proportion_of_likes_by_topic'] = user_proportion_of_likes_by_topic
 
-        posts['pred_prob'] = self.model.predict_proba(user_df.drop(self.cols_to_drop, axis=1))[:, 1]
-
-        sorted_posts = posts.sort_values('pred_prob', ascending=False).rename(columns={'post_id': 'id'})
-
-        recs = sorted_posts[['id', 'text', 'topic']].head(limit)
-
-        recs = recs.to_dict(orient='records')
-
-        logger.info("Successfully predicted!")
-
-        return recs
+        return user_df
 
 
 if __name__ == '__main__':
