@@ -55,3 +55,12 @@ bash run_service.sh
 
 
 # The main tools used in the project
+![Static Badge](https://img.shields.io/badge/-Python_3.10.8-090909?style=for-the-badge&logo=python&color=black)
+![Static Badge](https://img.shields.io/badge/-fastapi_0.75.1-090909?style=for-the-badge&logo=fastapi&color=black)
+![Static Badge](https://img.shields.io/badge/-uvicorn_0.16.0-090909?style=for-the-badge&logo=uvicorn&color=black)
+![Static Badge](https://img.shields.io/badge/-pandas_1.4.2-090909?style=for-the-badge&logo=pandas&color=black)
+![Static Badge](https://img.shields.io/badge/-numpy_1.22.4-090909?style=for-the-badge&logo=numpy&color=black)
+![Static Badge](https://img.shields.io/badge/-catboost_1.0.6-090909?style=for-the-badge&logo=catboost&color=black)
+![Static Badge](https://img.shields.io/badge/-scikit--learn_1.3.1-090909?style=for-the-badge&logo=scikit-learn&color=black)
+![Static Badge](https://img.shields.io/badge/-sqlalchemy_1.4.35-090909?style=for-the-badge&logo=sqlalchemy&color=black)
+![Static Badge](https://img.shields.io/badge/-loguru_0.6.0-090909?style=for-the-badge&logo=loguru&color=black)
