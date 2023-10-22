@@ -6,7 +6,7 @@ This repository represents a final project on KarpovCourses StartML - building P
 # How it works
 In this version of the project, the Content-Based Recommender is implemented using CatBoostClassifier model. 
 
-The data is loaded from the KarpovCourses PostgreSQL DataBase.
+The data is loaded from the KarpovCourses PostgreSQL DataBase and being tracked with **Data Version Control**
 
 The recommendations are being made by passing into the service endpoint a user_id.
 
@@ -17,6 +17,11 @@ The main metric used for this project is `Hitrate@5` (it was chosen by creators 
 
 # Get Started
 ## Dependencies
+
+* Install `dvc`, `dvc-gdrive` and load the data and the models:
+```
+dvc pull
+``` 
 
 * Install the required Python libraries: 
 ```
@@ -58,6 +63,7 @@ bash run_service.sh
 ![Static Badge](https://img.shields.io/badge/-Python_3.10.8-090909?style=for-the-badge&logo=python&color=black)
 ![Static Badge](https://img.shields.io/badge/-fastapi_0.75.1-090909?style=for-the-badge&logo=fastapi&color=black)
 ![Static Badge](https://img.shields.io/badge/-uvicorn_0.16.0-090909?style=for-the-badge&logo=uvicorn&color=black)
+![Static Badge](https://img.shields.io/badge/-dvc_3.27.0-090909?style=for-the-badge&logo=dvc&color=black)
 ![Static Badge](https://img.shields.io/badge/-pandas_1.4.2-090909?style=for-the-badge&logo=pandas&color=black)
 ![Static Badge](https://img.shields.io/badge/-numpy_1.22.4-090909?style=for-the-badge&logo=numpy&color=black)
 ![Static Badge](https://img.shields.io/badge/-catboost_1.0.6-090909?style=for-the-badge&logo=catboost&color=black)
