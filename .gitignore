@@ -11,3 +11,5 @@ validation_model_v1.pkl
 
 recommender_v2.pkl
 validation_model_v2.pkl
+
+artifacts/
